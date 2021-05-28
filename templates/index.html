@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
+</head>
+<body>
+    <table id="players_table">
+    	<tr>
+    		<th>IGN</th>
+    		<th>LVL</th>
+    		<th>FKDR</th>
+    		<th>WLR</th>
+    		<th>BBLR</th>
+    		<th>WS</th>
+    		<th>FNLS</th>
+    		<th>WINS</th>
+    		<th>LOSS</th>
+    	</tr>
+    </table>
+    <script>
+        var socket = io();
+
+        var table = document.getElementById("players_table");
+
+        socket.on("connect", function(){
+            socket.send("uses has connected");
+        });
+        socket.on("player_list", function(players){
+            display_players(players);
+            console.log(players);
+
+        });
+
+        function display_players(players){
+        	clearTable();
+        	for(var i = 0;i < players.length;i++){
+        		row = table.insertRow(1);
+        		if(players[i] instanceof String){
+        			row.insertCell(0).innerHTML = players[i];
+        			for(var o = 1; o < 8; o++){
+        				row.insertCell(o).innerHTML = "NK";
+        			}
+        		} else {
+        			row.insertCell(0).innerHTML = players[i].ign;
+        			row.insertCell(1).innerHTML = players[i].level;
+        			row.insertCell(2).innerHTML = players[i].FKDR;
+        			row.insertCell(3).innerHTML = players[i].WLR;
+        			row.insertCell(4).innerHTML = players[i].BBLR;
+        			row.insertCell(5).innerHTML = players[i].WS;
+        			row.insertCell(6).innerHTML = players[i].finals;
+        			row.insertCell(7).innerHTML = players[i].wins;
+        			row.insertCell(8).innerHTML = players[i].losses;
+        		}
+        	}
+        }
+
+        function clearTable(){
+        	var rows_count = table.rows.length;
+        	for(var z = 1;z < rows_count; z++){
+        		table.deleteRow(1);
+        	}
+        }
+    </script>
+</body>
+</html>
