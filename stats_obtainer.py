@@ -7,9 +7,9 @@ def get_player_stats(player, api_key):
 
 
     if player in cached_players:
-        return cached_players[player]
-
-    data = requests.get(f"https://api.hypixel.net/player?key={api_key}&name={player}").json()
+        data = requests.get(f"https://api.hypixel.net/player?key={api_key}&uuid={cached_players[player]}").json()
+    else:
+        data = requests.get(f"https://api.hypixel.net/player?key={api_key}&name={player}").json()
 
     if data["success"] is False or data["player"] is None:
         return {"success": False, "ign": player}
@@ -67,11 +67,8 @@ def get_player_stats(player, api_key):
         "WLR": round(wins/losses, 2),
         "WS": streak,
         "BBLR": round(beds_broken/beds_lost, 2),
-        "finals": final_kills,
-        "wins": wins,
-        "losses": losses,
         "score": round(bw_star*((final_kills/final_deaths)**2)),
     }
-    cached_players[player] = player_data
+    cached_players[player] = data["player"]["uuid"]
     return player_data
 

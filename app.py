@@ -15,7 +15,7 @@ app.config['SECRET_KEY'] = 'webiuyvoiarwueyborviuyaorievwaubyr'
 socketio = SocketIO(app)
 local_ip = socket.gethostbyname(socket.gethostname())
 target_port = 5000
-
+chat_msg_line_starter = "[Client thread/INFO]: [CHAT]"
 
 
 print(f"http://{local_ip}:{target_port}")
@@ -67,8 +67,8 @@ def process(line):
 
     updateList = True
 
-    if line.count("[Client thread/INFO]: [CHAT]") > 0:
-        line = line.strip()[40:]
+    if line.count(chat_msg_line_starter) > 0:
+        line = line.strip()[12+len(chat_msg_line_starter):]
     else:
         return 0
     if len(line) == 56 and line.startswith("Your new API key is ") == 1:
@@ -99,7 +99,13 @@ def process(line):
             for player in player_list:
                 player_stats = stats.get_player_stats(player, api_key)
                 players.append(player_stats)
-                # print(player_stats)
+                data = players
+                if isinstance(data[0], str):
+                    data = data
+                else:
+                    data = sorted(data, key=sortFunc, reverse=False)
+                socketio.emit("player_list", data)
+                print(player_stats)
         else:
             players = player_list
 
@@ -125,7 +131,6 @@ def process(line):
         else:
             data = sorted(data, key=sortFunc, reverse=False )
         socketio.emit("player_list", data)
-        print("ran", data)
 
     return 0
 
