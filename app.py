@@ -17,7 +17,6 @@ local_ip = socket.gethostbyname(socket.gethostname())
 target_port = 5000
 chat_msg_line_starter = "[Client thread/INFO]: [CHAT]"
 
-
 print(f"http://{local_ip}:{target_port}")
 
 @app.route('/')
@@ -150,7 +149,7 @@ def startLoop():
         return setup_output
 
     log_file.seek(0, 2)
-
+    os.startfile(f"http://{local_ip}:{target_port}")
     while os.path.exists(path_to_log):
         line = log_file.readline()
         if not line or len(line)<10:
